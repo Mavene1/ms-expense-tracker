@@ -25,14 +25,17 @@ public class AuthFilter extends GenericFilterBean {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String token = authorizationHeader.substring("Bearer ".length());
             try {
-                Claims claims = Jwts.parser().setSigningKey(Contants.API_SECRET_KEY).parseClaimsJws(token).getBody();
+                Claims claims = Jwts.parser()
+                        .setSigningKey(Contants.API_SECRET_KEY)
+                        .parseClaimsJws(token)
+                        .getBody();
                 httpServletRequest.setAttribute("userId", Integer.parseInt(claims.get("userId").toString()));
 //                httpServletRequest.setAttribute("token", token);
             } catch (Exception e) {
                 httpServletResponse.sendError(HttpStatus.FORBIDDEN.value(), "Invalid or expired token");
                 return;
             }
-        }else {
+        } else {
             httpServletResponse.sendError(HttpStatus.FORBIDDEN.value(), "Authorization header not found");
             return;
         }
