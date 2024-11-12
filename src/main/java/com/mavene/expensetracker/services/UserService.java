@@ -5,7 +5,7 @@ import com.mavene.expensetracker.exception.EtAuthException;
 
 public interface UserService {
 
-    UserDto validateUser(String email, String password) throws EtAuthException;
+    UserDto validateUser(UserDto userDto) throws EtAuthException;
 
 //    UserDto registerUser(String firstName, String lastName, String email, String password) throws EtAuthException;
     UserDto registerUser(UserDto userDto) throws EtAuthException;

@@ -2,6 +2,7 @@ package com.mavene.expensetracker.controller;
 
 import com.mavene.expensetracker.dto.UserDto;
 import com.mavene.expensetracker.services.UserService;
+import com.mavene.expensetracker.utils.JwtUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,21 +23,22 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/registerUser")
-    public ResponseEntity<UserDto> registerUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<Map<String, String>> registerUser(@RequestBody UserDto userDto) {
         UserDto savedUser = userService.registerUser(userDto);
         System.out.println("Creating and saving user.....");
 //        Map<String, String> map = new HashMap<>();
 //        map.put("message", "User created: " + savedUser.getEmail() );
-        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+
+        return new ResponseEntity<>(JwtUtil.generateJWT(savedUser), HttpStatus.CREATED);
     }
 
     @PostMapping("/loginUser")
-    public ResponseEntity<UserDto> loginUser(@RequestBody Map<String, Object> userMap) {
-        String email = (String) userMap.get("email");
-        String password = (String) userMap.get("password");
-        UserDto loggedInUser = userService.validateUser(email, password);
+    public ResponseEntity<Map<String, String>> loginUser(@RequestBody UserDto userDto) {
+//        String email = (String) userMap.get("email");
+//        String password = (String) userMap.get("password");
+        UserDto loggingInUser = userService.validateUser(userDto);
         System.out.println("Logging in user.....");
-        return new ResponseEntity<>(loggedInUser, HttpStatus.CREATED);
+        return new ResponseEntity<>(JwtUtil.generateJWT(loggingInUser), HttpStatus.CREATED);
     }
 
 

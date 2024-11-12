@@ -9,7 +9,8 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findByEmail(String email); // <2>
+    Optional<User> findByEmail(String email);// <2>
+
     Optional<User> findByEmailAndPassword(String email, String password);
 
 //    Integer createUser(String firstName, String lastName, String email, String password) throws EtAuthException;
