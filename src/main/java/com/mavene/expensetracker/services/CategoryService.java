@@ -15,7 +15,7 @@ public interface CategoryService {
     CategoryDto getCategoryById(Integer userId, Integer categoryId) throws EtResourceNotFoundException;
 
     //create category
-    CategoryDto createCategory(CategoryDto categoryDto) throws EtBadRequestException;
+    CategoryDto createCategory(Integer userId, CategoryDto categoryDto) throws EtBadRequestException;
 
     //update category
     CategoryDto updateCategory(Integer userId, Integer categoryId, CategoryDto categoryDto) throws EtBadRequestException;

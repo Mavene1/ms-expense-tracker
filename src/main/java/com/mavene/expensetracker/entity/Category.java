@@ -18,7 +18,7 @@ public class Category {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private Integer userId;
+    private User userId;
 
     private String title;
 
