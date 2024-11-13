@@ -54,5 +54,4 @@ public class CategoryController {
         categoryService.deleteCategoryWithAllTransactions(userId, categoryId);
         return new ResponseEntity<>("Category deleted successfully", HttpStatus.OK);
     }
-
 }
