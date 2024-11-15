@@ -24,7 +24,7 @@ public class CategoryController {
     public ResponseEntity<CategoryDto> createCategory(HttpServletRequest request, @RequestBody CategoryDto categoryDto){
         Integer userId = (Integer) request.getAttribute("userId");
         CategoryDto createdCategory = categoryService.createCategory(userId, categoryDto);
-        return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
+        return new ResponseEntity<>(createdCategory, HttpStatus.OK);
     }
     //getCategoryById
     @GetMapping("/getCategoryById/{categoryId}")

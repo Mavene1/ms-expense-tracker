@@ -31,6 +31,6 @@ public class Transaction {
     private String note;
 
     @Column(name = "transaction_date", nullable = false)
-    private LocalDate transactionDate;
+    private String transactionDate;
 }
 

@@ -1,6 +1,12 @@
 package com.mavene.expensetracker.services.impl;
 
 import com.mavene.expensetracker.dto.TransactionDto;
+import com.mavene.expensetracker.entity.Category;
+import com.mavene.expensetracker.entity.Transaction;
+import com.mavene.expensetracker.entity.User;
+import com.mavene.expensetracker.exception.EtBadRequestException;
+import com.mavene.expensetracker.exception.EtResourceNotFoundException;
+import com.mavene.expensetracker.mapper.TransactionMapper;
 import com.mavene.expensetracker.repository.CategoryRepository;
 import com.mavene.expensetracker.repository.TransactionRepository;
 import com.mavene.expensetracker.repository.UserRepository;
@@ -23,26 +29,69 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public TransactionDto createTransaction(Integer userId, Integer categoryId, TransactionDto transactionDto) {
-        return null;
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EtBadRequestException("User not found with id: " + userId));
+        Category category = categoryRepository.findById(categoryId)
+                .filter(category1 -> category1.getUserId().equals(user))
+                .orElseThrow(() -> new EtBadRequestException("Category not found with id: " + categoryId));
+        Transaction transaction = TransactionMapper.toTransaction(transactionDto);
+        transaction.setCategoryId(category);
+        transaction.setUserId(user);
+        Transaction savedTransaction = transactionRepository.save(transaction);
+        return TransactionMapper.toTransactionDto(savedTransaction);
     }
 
     @Override
     public List<TransactionDto> getAllTransactions(Integer userId, Integer categoryId) {
-        return List.of();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EtBadRequestException("User not found with id: " + userId));
+        Category category = categoryRepository.findById(categoryId)
+                .filter(category1 -> category1.getUserId().equals(user))
+                .orElseThrow(() -> new EtBadRequestException("Category not found with id: " + categoryId));
+        List<Transaction> transactions = transactionRepository.findAllByUserIdAndCategoryId(user, category);
+        return transactions.stream().map(TransactionMapper::toTransactionDto).toList();
     }
 
     @Override
-    public TransactionDto getTransactionById(Integer userId, Integer transactionId) {
-        return null;
+    public TransactionDto getTransactionById(Integer userId, Integer categoryId, Integer transactionId) throws EtResourceNotFoundException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EtBadRequestException("User not found with id: " + userId));
+        Category category = categoryRepository.findById(categoryId)
+                .filter(category1 -> category1.getUserId().equals(user))
+                .orElseThrow(() -> new EtResourceNotFoundException("Category not found with id: " + categoryId));
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .filter(transaction1 -> transaction1.getCategoryId().equals(category))
+                .orElseThrow(() -> new EtResourceNotFoundException("Transaction not found with id: " + transactionId));
+        return TransactionMapper.toTransactionDto(transaction);
     }
 
     @Override
-    public TransactionDto updateTransaction(Integer userId, Integer transactionId, TransactionDto transactionDto) {
-        return null;
+    public TransactionDto updateTransaction(Integer userId, Integer categoryId, Integer transactionId, TransactionDto transactionDto) throws EtBadRequestException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EtBadRequestException("User not found with id: " + userId));
+        Category category = categoryRepository.findById(categoryId)
+                .filter(category1 -> category1.getUserId().equals(user))
+                .orElseThrow(() -> new EtBadRequestException("Category not found with id: " + categoryId));
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .filter(transaction1 -> transaction1.getCategoryId().equals(category))
+                .orElseThrow(() -> new EtBadRequestException("Transaction not found with id: " + transactionId));
+        transaction.setAmount(transactionDto.getAmount());
+        transaction.setNote(transactionDto.getNote());
+        transaction.setTransactionDate(transactionDto.getTransactionDate());
+        Transaction updatedTransaction = transactionRepository.save(transaction);
+        return TransactionMapper.toTransactionDto(updatedTransaction);
     }
 
     @Override
-    public void deleteTransaction(Integer userId, Integer transactionId) {
-
+    public void deleteTransaction(Integer userId, Integer categoryId, Integer transactionId) throws EtResourceNotFoundException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EtBadRequestException("User not found with id: " + userId));
+        Category category = categoryRepository.findById(categoryId)
+                .filter(category1 -> category1.getUserId().equals(user))
+                .orElseThrow(() -> new EtResourceNotFoundException("Category not found with id: " + categoryId));
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .filter(transaction1 -> transaction1.getCategoryId().equals(category))
+                .orElseThrow(() -> new EtResourceNotFoundException("Transaction not found with id: " + transactionId));
+        transactionRepository.deleteById(transactionId);
     }
 }

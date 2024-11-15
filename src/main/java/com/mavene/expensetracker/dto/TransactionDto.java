@@ -17,5 +17,5 @@ public class TransactionDto {
     private Integer userId;
     private Double amount;
     private String note;
-    private LocalDate transactionDate;
+    private String transactionDate;
 }

@@ -65,6 +65,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategoryWithAllTransactions(Integer userId, Integer categoryId) throws EtResourceNotFoundException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EtBadRequestException("User not found with id: " + userId));
+        Category category = categoryRepository.findById(categoryId)
+                .filter(category1 -> category1.getUserId().equals(user))
+                .orElseThrow(() -> new EtResourceNotFoundException("Category not found with id: " + categoryId));
+        categoryRepository.delete(category);
+
 
     }
 }
