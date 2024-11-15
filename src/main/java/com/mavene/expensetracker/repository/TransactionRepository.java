@@ -10,4 +10,5 @@ import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
     List<Transaction> findAllByUserIdAndCategoryId(User userId, Category categoryId) throws EtResourceNotFoundException;
+    void deleteAllByCategoryId(Category category);
 }

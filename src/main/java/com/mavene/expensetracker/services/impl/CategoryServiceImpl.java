@@ -7,6 +7,7 @@ import com.mavene.expensetracker.exception.EtBadRequestException;
 import com.mavene.expensetracker.exception.EtResourceNotFoundException;
 import com.mavene.expensetracker.mapper.CategoryMapper;
 import com.mavene.expensetracker.repository.CategoryRepository;
+import com.mavene.expensetracker.repository.TransactionRepository;
 import com.mavene.expensetracker.repository.UserRepository;
 import com.mavene.expensetracker.services.CategoryService;
 import lombok.AllArgsConstructor;
@@ -21,11 +22,12 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final TransactionRepository transactionRepository;
 
     @Override
     public CategoryDto createCategory(Integer userId, CategoryDto categoryDto) throws EtBadRequestException {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EtBadRequestException("User not found with id: " + userId));
+                .orElseThrow(() -> new EtResourceNotFoundException("User not found with id: " + userId));
         Category category = CategoryMapper.toCategory(categoryDto);
         category.setUserId(user);
         Category savedCategory = categoryRepository.save(category);
@@ -35,7 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto getCategoryById(Integer userId, Integer categoryId) throws EtResourceNotFoundException {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EtBadRequestException("User not found with id: " + userId));
+                .orElseThrow(() -> new EtResourceNotFoundException("User not found with id: " + userId));
         Category category = categoryRepository.findById(categoryId)
                 .filter(category1 -> category1.getUserId().equals(user))
                 .orElseThrow(() -> new EtResourceNotFoundException("Category not found with id: " + categoryId));
@@ -45,7 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryDto> getAllCategories(Integer userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EtBadRequestException("User not found with id: " + userId));
+                .orElseThrow(() -> new EtResourceNotFoundException("User not found with id: " + userId));
         List<Category> categories = categoryRepository.findAllByUserId(user);
         return categories.stream().map(CategoryMapper::toCategoryDto).toList();
     }
@@ -53,7 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto updateCategory(Integer userId, Integer categoryId, CategoryDto categoryDto) throws EtBadRequestException {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EtBadRequestException("User not found with id: " + userId));
+                .orElseThrow(() -> new EtResourceNotFoundException("User not found with id: " + userId));
         Category category = categoryRepository.findById(categoryId)
                 .filter(category1 -> category1.getUserId().equals(user))
                 .orElseThrow(() -> new EtResourceNotFoundException("Category not found with id: " + categoryId));
@@ -66,12 +68,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategoryWithAllTransactions(Integer userId, Integer categoryId) throws EtResourceNotFoundException {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EtBadRequestException("User not found with id: " + userId));
+                .orElseThrow(() -> new EtResourceNotFoundException("User not found with id: " + userId));
         Category category = categoryRepository.findById(categoryId)
                 .filter(category1 -> category1.getUserId().equals(user))
                 .orElseThrow(() -> new EtResourceNotFoundException("Category not found with id: " + categoryId));
+        transactionRepository.deleteAllByCategoryId(category);
         categoryRepository.delete(category);
-
-
     }
 }
