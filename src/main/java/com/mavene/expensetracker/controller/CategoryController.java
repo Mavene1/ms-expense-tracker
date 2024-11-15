@@ -1,8 +1,9 @@
 package com.mavene.expensetracker.controller;
 
 import com.mavene.expensetracker.dto.CategoryDto;
-import com.mavene.expensetracker.entity.Category;
 import com.mavene.expensetracker.services.CategoryService;
+import com.mavene.expensetracker.dto.ResponseStructure;
+import com.mavene.expensetracker.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,17 +29,29 @@ public class CategoryController {
     }
     //getCategoryById
     @GetMapping("/getCategoryById/{categoryId}")
-    public ResponseEntity<CategoryDto> getCategoryById(HttpServletRequest request, @PathVariable Integer categoryId){
+    public ResponseEntity<ResponseStructure<CategoryDto>> getCategoryById(HttpServletRequest request, @PathVariable Integer categoryId){
         Integer userId = (Integer) request.getAttribute("userId");
         CategoryDto category = categoryService.getCategoryById(userId, categoryId);
-        return new ResponseEntity<>(category, HttpStatus.OK);
+        ResponseStructure<CategoryDto> response = ResponseUtil.createResponse(
+                200,
+                "Success",
+                "Category fetched successfully",
+                category
+        );
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     //getAllCategories
     @GetMapping("/getAllCategories")
-    public ResponseEntity<List<CategoryDto>> getAllCategories(HttpServletRequest request){
+    public ResponseEntity<ResponseStructure<List<CategoryDto>>> getAllCategories(HttpServletRequest request){
         Integer userId = (Integer) request.getAttribute("userId");
         List<CategoryDto> categories = categoryService.getAllCategories(userId);
-        return new ResponseEntity<>(categories, HttpStatus.OK);
+        ResponseStructure<List<CategoryDto>> response = ResponseUtil.createResponse(
+                200,
+                "Success",
+                "All Categories fetched successfully",
+                categories
+        );
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     //updateCategory
     @PutMapping("/updateCategory/{categoryId}")

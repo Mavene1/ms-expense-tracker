@@ -75,4 +75,31 @@ public class CategoryServiceImpl implements CategoryService {
         transactionRepository.deleteAllByCategoryId(category);
         categoryRepository.delete(category);
     }
+
+//    @Override
+//    public void deleteCategoryWithAllTransactions(Integer userId, Integer categoryId) throws EtResourceNotFoundException {
+//        // Fetch the user
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new EtResourceNotFoundException("User not found with id: " + userId));
+//
+//        // Fetch the category
+//        Category category = categoryRepository.findById(categoryId)
+//                .orElseThrow(() -> new EtResourceNotFoundException("Category not found with id: " + categoryId));
+//
+//        // Check if the user is an admin or super admin
+//        boolean isAdmin = user.getRoles().stream()
+//                .anyMatch(role -> role.getName().equalsIgnoreCase("ADMIN") || role.getName().equalsIgnoreCase("SUPER_ADMIN"));
+//
+//        // If the user is not an admin, ensure they own the category
+//        if (!isAdmin && !category.getUserId().equals(user)) {
+//            throw new EtResourceNotFoundException("Unauthorized to delete this category");
+//        }
+//
+//        // Delete all transactions associated with the category
+//        transactionRepository.deleteAllByCategoryId(category);
+//
+//        // Delete the category itself
+//        categoryRepository.delete(category);
+//    }
+
 }
