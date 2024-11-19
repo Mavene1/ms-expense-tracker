@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class ResponseHeader {
+public class ResponseHeaderDto {
     private String refId;
     private Integer responseCode;
     private String responseMessage;

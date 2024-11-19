@@ -1,6 +1,9 @@
 package com.mavene.expensetracker.filters;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mavene.expensetracker.constants.Contants;
+import com.mavene.expensetracker.dto.ResponseDto;
+import com.mavene.expensetracker.utils.ApiResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
@@ -32,14 +35,39 @@ public class AuthFilter extends GenericFilterBean {
                 httpServletRequest.setAttribute("userId", Integer.parseInt(claims.get("userId").toString()));
 //                httpServletRequest.setAttribute("token", token);
             } catch (Exception e) {
-                httpServletResponse.sendError(HttpStatus.FORBIDDEN.value(), "Invalid or expired token");
+//                throw new EtAuthException("Invalid or expired token");
+//                httpServletResponse.sendError(HttpStatus.FORBIDDEN.value(), "Invalid or expired token");
+                sendErrorResponse(httpServletResponse, "Invalid or expired token");
                 return;
             }
         } else {
-            httpServletResponse.sendError(HttpStatus.FORBIDDEN.value(), "Authorization header not found");
+//            httpServletResponse.sendError(HttpStatus.FORBIDDEN.value(), "Authorization header not found");
+            sendErrorResponse(httpServletResponse, "Authorization header not found");
             return;
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    /**
+     * Helper method to construct and send a structured error response.
+     */
+    private void sendErrorResponse(HttpServletResponse response, String customerMessage) throws IOException {
+        response.setStatus(HttpStatus.FORBIDDEN.value());
+        response.setContentType("application/json");
+
+        // Use ApiResponse to create the error response
+        ResponseDto<Object> errorResponse = ApiResponse.createErrorResponse(
+                HttpStatus.FORBIDDEN.value(),
+                "Forbidden",
+                customerMessage
+        );
+
+        // Serialize the response using ObjectMapper
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonResponse = objectMapper.writeValueAsString(errorResponse);
+
+        // Write the JSON response to the output stream
+        response.getWriter().write(jsonResponse);
     }
 }

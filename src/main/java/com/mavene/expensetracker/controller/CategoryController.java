@@ -1,9 +1,9 @@
 package com.mavene.expensetracker.controller;
 
 import com.mavene.expensetracker.dto.CategoryDto;
+import com.mavene.expensetracker.dto.ResponseDto;
 import com.mavene.expensetracker.services.CategoryService;
-import com.mavene.expensetracker.dto.ResponseStructure;
-import com.mavene.expensetracker.utils.ResponseUtil;
+import com.mavene.expensetracker.utils.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,10 +29,10 @@ public class CategoryController {
     }
     //getCategoryById
     @GetMapping("/getCategoryById/{categoryId}")
-    public ResponseEntity<ResponseStructure<CategoryDto>> getCategoryById(HttpServletRequest request, @PathVariable Integer categoryId){
+    public ResponseEntity<ResponseDto<CategoryDto>> getCategoryById(HttpServletRequest request, @PathVariable Integer categoryId){
         Integer userId = (Integer) request.getAttribute("userId");
         CategoryDto category = categoryService.getCategoryById(userId, categoryId);
-        ResponseStructure<CategoryDto> response = ResponseUtil.createResponse(
+        ResponseDto<CategoryDto> response = ApiResponse.createResponse(
                 200,
                 "Success",
                 "Category fetched successfully",
@@ -42,10 +42,10 @@ public class CategoryController {
     }
     //getAllCategories
     @GetMapping("/getAllCategories")
-    public ResponseEntity<ResponseStructure<List<CategoryDto>>> getAllCategories(HttpServletRequest request){
+    public ResponseEntity<ResponseDto<List<CategoryDto>>> getAllCategories(HttpServletRequest request){
         Integer userId = (Integer) request.getAttribute("userId");
         List<CategoryDto> categories = categoryService.getAllCategories(userId);
-        ResponseStructure<List<CategoryDto>> response = ResponseUtil.createResponse(
+        ResponseDto<List<CategoryDto>> response = ApiResponse.createResponse(
                 200,
                 "Success",
                 "All Categories fetched successfully",

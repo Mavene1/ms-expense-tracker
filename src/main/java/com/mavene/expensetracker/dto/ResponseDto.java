@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class ResponseStructure<T> {
-    private ResponseHeader header;
+public class ResponseDto<T> {
+    private ResponseHeaderDto header;
     private T body;
 }
